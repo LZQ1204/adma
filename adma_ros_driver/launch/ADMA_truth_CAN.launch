@@ -1,0 +1,56 @@
+<launch>
+  <!-- Required: DBC path -->
+  <arg name="dbc_file" default="/ABS/PATH/TO/ADMA.dbc" />
+
+  <!-- CAN device settings -->
+  <arg name="channel" default="0" />
+  <arg name="can_fd" default="true" />
+  <arg name="bitrate" default="500000" />
+  <arg name="bitrate_fd" default="2000000" />
+
+  <!-- Publish behavior -->
+  <arg name="publish_on_frame" default="0" />
+  <arg name="publish_hz" default="20.0" />
+  <arg name="max_age_sec" default="0.2" />
+  <arg name="require_all" default="true" />
+  <arg name="use_freshness" default="true" />
+  <arg name="truth_log" default="false" />
+  <arg name="truth_log_hz" default="1.0" />
+
+  <!-- Assumed CAN IDs (decimal). Replace to match your DBC. -->
+  <arg name="speed_can_id" default="256" />
+  <arg name="yaw_rate_can_id" default="257" />
+  <arg name="lat_accel_can_id" default="258" />
+  <arg name="long_accel_can_id" default="259" />
+
+  <!-- Assumed signal names. Replace to match your DBC. -->
+  <arg name="speed_signal" default="veh_speed" />
+  <arg name="yaw_rate_signal" default="yaw_rate" />
+  <arg name="lat_accel_signal" default="lat_accel" />
+  <arg name="long_accel_signal" default="long_accel" />
+
+  <node pkg="adma_ros_driver" type="adma_truth_can_node.py" name="adma_truth_can" output="screen">
+    <param name="dbc_file" value="$(arg dbc_file)" />
+    <param name="channel" value="$(arg channel)" />
+    <param name="can_fd" value="$(arg can_fd)" />
+    <param name="bitrate" value="$(arg bitrate)" />
+    <param name="bitrate_fd" value="$(arg bitrate_fd)" />
+    <param name="publish_on_frame" value="$(arg publish_on_frame)" />
+    <param name="publish_hz" value="$(arg publish_hz)" />
+    <param name="max_age_sec" value="$(arg max_age_sec)" />
+    <param name="require_all" value="$(arg require_all)" />
+    <param name="use_freshness" value="$(arg use_freshness)" />
+    <param name="truth_log" value="$(arg truth_log)" />
+    <param name="truth_log_hz" value="$(arg truth_log_hz)" />
+
+    <param name="speed_can_id" value="$(arg speed_can_id)" />
+    <param name="yaw_rate_can_id" value="$(arg yaw_rate_can_id)" />
+    <param name="lat_accel_can_id" value="$(arg lat_accel_can_id)" />
+    <param name="long_accel_can_id" value="$(arg long_accel_can_id)" />
+
+    <param name="speed_signal" value="$(arg speed_signal)" />
+    <param name="yaw_rate_signal" value="$(arg yaw_rate_signal)" />
+    <param name="lat_accel_signal" value="$(arg lat_accel_signal)" />
+    <param name="long_accel_signal" value="$(arg long_accel_signal)" />
+  </node>
+</launch>
