@@ -1,0 +1,78 @@
+<!--
+  arbe_phoenix_radar_driver Launch 
+-->
+<launch>
+	#enum machine_type
+	#{
+	#  ALL_NODES = 0, all run on same machine
+	# VIS_ONLY = 1,
+	#  DATA_ONLY = 2
+	#}
+
+	<arg name="machine" default="" />
+	<arg name="node_name" value="" unless="$(eval machine=='vis' or machine=='data')"/>
+	<arg name="node_name" value="_vis_only" if="$(eval machine=='vis')" />
+	<arg name="node_name" value="_data_only" if="$(eval machine=='data')" />
+
+	<arg name="type" value="0" unless="$(eval machine=='vis' or machine=='data')"/>
+	<arg name="type" value="1" if="$(eval machine=='vis')" />
+	<arg name="type" value="2" if="$(eval machine=='data')" />
+
+	<arg name="config_path" default="$(find arbe_phoenix_radar_driver)/Config" />
+	<arg name="configuration" default="launch_config_4radars.yaml" />
+	
+	####  For GDB add: launch-prefix="gdb -ex run --args" ####
+	<node name="arbe_gui$(arg node_name)" pkg="arbe_phoenix_radar_driver" type="arbe_gui" output="screen" required="true" >
+		<rosparam command="load" file="$(arg config_path)/$(arg configuration)" unless="$(eval machine=='vis')" />
+		<param name="machine_type" value="$(arg type)" />
+	</node>
+	<include file="$(find my_publisher)/launch/start_talker.launch"> 
+	</include>
+	<!-- <include file="$(find imu_publisher)/launch/imu.launch"> 
+	</include> -->
+	<include file="$(find qt_image_viewer_node)/launch/qt_image_viewer.launch">
+	</include>
+	<include file="$(find my_camera_package)/launch/multi_camera_launcher.launch"> 
+	</include>
+	<!-- <include file="$(find cansignal)/launch/signal_data.launch">
+	</include> -->
+	<!-- <include file="$(find cansetcar)/launch/setcarvec.launch">
+	</include> -->
+	<!-- <include file="$(find huace)/launch/huace.launch">
+	</include>  -->
+
+	<!-- ADMA 以太网驱动（ETH），如需启用取消注释 -->
+	<!--
+	<include file="$(find adma_ros_driver)/launch/ADMA_pub_Ethernet.launch">
+		<arg name="destination_ip" value="192.168.88.255"/>
+		<arg name="destination_port" value="11021"/>
+		<arg name="protocol_version" value="v3.3.4"/>
+		<arg name="mode" value="default"/>
+		<arg name="log_gsdb" value="false"/>
+		<arg name="record_rosbag" value="false"/>
+		<arg name="log_path" value="/home/$(env USER)/adma_logs/"/>
+	</include>
+	-->
+
+	<!-- ADMA CAN 驱动，如需启用取消注释并填好 DBC 路径 -->
+	<!--
+	<include file="$(find adma_ros_driver)/launch/ADMA_pub_CAN.launch">
+		<arg name="path_to_adma_dbc_file" value="/ABS/PATH/TO/ADMA.dbc"/>
+		<arg name="path_to_sensor_dbc_file" value="/ABS/PATH/TO/SENSOR.dbc"/>
+		<arg name="base_id_adma" value="100"/>
+	</include>
+	-->
+
+	<!-- ADMA CAN truth (Kvaser + cantools). Fill dbc_file then uncomment to enable. -->
+	<!--
+	<include file="$(find adma_ros_driver)/launch/ADMA_truth_CAN.launch">
+		<arg name="dbc_file" value="/ABS/PATH/TO/ADMA.dbc"/>
+		<arg name="channel" value="0"/>
+		<arg name="can_fd" value="true"/>
+		<arg name="bitrate" value="500000"/>
+		<arg name="bitrate_fd" value="2000000"/>
+		<arg name="publish_on_frame" value="1"/>
+		<arg name="publish_hz" value="0"/>
+	</include>
+	-->
+</launch>
